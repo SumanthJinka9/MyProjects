@@ -1,0 +1,38 @@
+{% extends "layout.html" %}
+{% set active_page = "contact" %}
+{% block title %}
+Skill Verse - Messages
+{% endblock %}
+{% block content %}
+<div>
+    <h2>Messages</h2>
+    <hr class="divider">
+    <div class="row">
+        <div class="col-12">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th scope="col">Name</th>
+                        <th scope="col">Email</th>
+                        <th scope="col">Subject</th>
+                        <th scope="col">Message</th>
+                        <th scope="col">Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for message in messages %}
+                    <tr>
+                        <td>{{message.name}}</td>
+                        <td>{{message.email}}</td>
+                        <td>{{message.subject}}</td>
+                        <td>{{message.message}}</td>
+                        <td>{{message.date}}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

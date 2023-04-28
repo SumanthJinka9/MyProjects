@@ -1,0 +1,180 @@
+{% extends "layout.html" %}
+{% set active_page = "home" %}
+{% block title %}
+Skill Verse - Home
+{% endblock %}
+{% block content %}
+
+<section class="container-fluid" id="hero">
+    <div class="row align-items-center justify-content-center">
+        <div id="main-section" class="col-lg-7 text-center text-lg-center px-5">
+            <h1 class="display-4 fw-bold lh-1 my-3 text-white">Skill Verse, Learn from the best.</h1>
+            <hr class="bg-primary border-2 border-top border-info">
+            <p class="fs-5 text-white text-center">At Skill Verse we offer courses from basic to advanced levels,
+                with an emphasis on
+                useful technical skills that may are used in industry.
+                The courses are taught via videos, interactive activities, projects.
+                You can gain access to training programs, tutorials, and other materials in technical areas
+                including programming, web development, data science, cybersecurity, cloud technologies, and more by
+                subscribing.</p>
+
+            {% if current_user.is_authenticated %}
+            <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
+                <form action="{{ url_for('courses') }}">
+                    <button type="submit" class="btn btn-primary btn-lg px-4 me-sm-3 fw-bold">Explore</button>
+                </form>
+            </div>
+            {% endif %}
+        </div>
+        {% if not current_user.is_authenticated %}
+        <div id="login-section" class="col-md-10 col-lg-4 py-5">
+            <form method="post" action="{{ url_for('home')}}" id="login_form"
+                class="register-form p-4 p-md-5 border rounded-3 bg-light needs-validation" novalidate>
+                <p class="text-danger">{{error}}</p>
+                <h2>Login</h2>
+
+                {{ form.hidden_tag() }}
+                <div class="form-floating mb-3">
+                    {{ form.email(class="form-control", required="required") }}
+                    {{ form.email.label(class="form-label", for="email") }}
+                    <div class="invalid-feedback">
+                        Please provide valid email address.
+                    </div>
+                </div>
+                {% if form.email.errors %}
+                <ul class="errors text-danger">
+                    {% for error in form.email.errors %}
+                    <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+                <div class="form-floating mb-3">
+                    {{ form.password(class="form-control", required="required", type="password") }}
+                    {{ form.password.label(class="form-label", for="password") }}
+                    <div class="invalid-feedback">
+                        Please provide valid password.
+                    </div>
+                </div>
+                {% if form.password.errors %}
+                <ul class="errors text-danger">
+                    {% for error in form.password.errors %}
+                    <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+
+                <div class="checkbox mb-3">
+                    {{ form.remember() }}
+                    {{ form.remember.label() }}
+                </div>
+
+                {{ form.submit(class="btn btn-primary btn-lg px-4 me-sm-3 fw-bold") }}
+                <small class="text-muted d-block pt-2">Don't have an account? <a href="{{ url_for('register') }}">Sign up</a></small>
+            </form>
+        </div>
+        {% endif %}
+    </div>
+</section>
+<section>
+    <div class="container py-5">
+        <div class="row align-items-center text-center">
+            <h2>Our Popular Courses</h2>
+            <hr class="divider">
+            <p>Try some of our top courses taught by industry experts to level up your knowledge</p>
+            <div class="row">
+                <div class="chart-container col-6 mx-auto justify-content-center align-items-center" style="position: relative; height:60vh; width:80vw">
+                    <canvas id="myChart"></canvas>
+                </div>
+                
+            </div>
+        </div>
+        <section>
+            <div id="popular-course-section" class="row mb-3">
+                {% for course in popular_courses %}
+                <div class="col-sm-12 col-lg-3 col-md-6 mb-4 mb-lg-0">
+                    <div class="card course-card">
+                        <img src="{{course.image}}" class="card-img-top" alt="{{course.name}}" />
+                        <div class="card-body">
+                            <h5 class="mb-2">{{course.name}}</h5>
+                            <p>{{course.description}}</p>
+                            <div class="d-flex mb-2">
+                                <div class="mr-auto text-warning">
+                                    {{course.rating}}
+                                    <i class="fa fa-star"></i>
+                                </div>
+                            </div>
+                            <div class="d-flex mb-3">
+                                <p class="text-danger mx-2"><s>{{course.price}}</s></p>
+                                <h5 class="text-dark mb-0">{{course.discounted_price}}</h5>
+                            </div>
+                            {% if current_user.is_authenticated %}
+                            <button data-id={{course.id}} href="{{ url_for('cart') }}"
+                                class="btn btn-primary add-to-cart">Add to cart</button>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+    </div>
+</section>
+<!-- <div class="modal fade" id="register-model" tabindex="-1" role="dialog" aria-labelledby="register-model" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close btn btn-danger" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+            <div class="main-container container">
+                <div class="main-section">
+                    <h2 class="main-section-heading">Haven't signed up yet?</h2>
+                    <hr class="divider">
+                    <p class="main-section-text small">Our courses are designed by industry experts to help you learn the skills you
+                        need to succeed in ever changing IT domain.</p>
+                </div>
+                <form id="register_form" class="signup-form p-4 p-md-5 border rounded-3 bg-light needs-validation" novalidate>
+                    <h2>Sign Up</h2>
+                    <hr class="divider">
+                    <div class="form-floating mb-3">
+                        <input class="form-control" required type="text" id="name" name="name" placeholder="Enter your name">
+                        <label for="name">Full name</label>
+                        <div class="invalid-feedback">
+                            Please provide full name.
+                        </div>
+                    </div>
+                    <div class="form-floating mb-3">
+                        <input class="form-control" required type="email" id="email" name="email" placeholder="Enter your email">
+                        <label for="email">Email</label>
+                        <div class="invalid-feedback">
+                            Please provide valid email.
+                        </div>
+                    </div>
+                    <div class="form-floating mb-3">
+                        <input class="form-control" required type="password" id="password" name="password" placeholder="Enter your password">  
+                        <label for="password">Password</label>
+                        <div class="invalid-feedback">
+                            Please provide your password.
+                        </div>
+                    </div>
+                    <div class="form-floating mb-3">
+                        <input class="form-control" required type="password" id="password2" name="password2" placeholder="Confirm your password">     
+                        <label for="password2">Confirm password</label>
+                        <div class="invalid-feedback">
+                            Please re-enter selected password.
+                        </div>
+                    </div>
+
+                    <button class="w-100 btn btn-lg btn-primary" type="submit">Sign Up</button>
+                    <small>By signing up, you agree to our <a href="#">Terms of Use</a> and <a href="#">Privacy Policy</a>.
+                    </small>
+        
+                </form>
+            </div>
+        </div>
+      </div>
+    </div>
+  </div> -->
+{% endblock %}

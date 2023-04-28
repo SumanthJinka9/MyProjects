@@ -1,0 +1,66 @@
+{% extends "layout.html" %}
+{% set active_page = "courses" %}
+{% block title %}
+Skill Verse - Courses
+{% endblock %}
+{% block content %}
+<section id="search-container" class="container mr-auto ms-auto pt-10">
+    <div class="row input-group align-items-center py-5 px-5">
+        <form method="post" action="{{ url_for('courses')}}" id="search_form">
+            <div class="row form-outline g-0">
+                <div class="col-6">
+                    <input id="search-focus" value="{{searchtext}}"  name="searchtext" type="search" onsearch="onSearch()" placeholder="search for courses" class="form-control" />
+                </div>
+                <div class="col-6">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fa fa-search"></i>
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="container">
+        {% if searchtext %}
+        <h2>Search results for "{{searchtext}}"</h2>
+        {% else %}
+        <h2>Our Courses</h2>
+        {% endif %}
+
+        <div id="course-section" class="row mb-3">
+            {% for course in courses %}
+            <div class="col-sm-12 col-lg-3 col-md-6 mb-4 mb-lg-0">
+                <div class="card course-card">
+                    <img src="{{course.image}}" class="card-img-top"
+                        alt="{{course.name}}" />
+                    <div class="card-body">
+                        <h5 class="mb-2">{{course.name}}</h5>
+                        <p>{{course.description}}</p>
+                        <div class="d-flex mb-2">
+                            <div class="mr-auto text-warning">
+                                {{course.rating}}
+                                <i class="fa fa-star"></i>
+                            </div>
+                        </div>
+                        <div class="d-flex mb-3">
+                            <p class="text-danger mx-2"><s>{{course.price}}</s></p>
+                            <h5 class="text-dark mb-0">{{course.discounted_price}}</h5>
+                        </div>
+                        <button data-id={{course.id}} href="{{ url_for('cart') }}" class="btn btn-primary add-to-cart">Add to cart</button>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+
+            {% if not courses %}
+            <div class="col-sm-12 col-lg-3 col-md-6 mb-4 mb-lg-0">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="mb-2">No courses found</h5>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</section>
+{% endblock %}
